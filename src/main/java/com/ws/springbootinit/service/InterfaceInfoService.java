@@ -2,7 +2,6 @@ package com.ws.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ws.springbootinit.model.entity.InterfaceInfo;
-import com.ws.springbootinit.model.entity.Post;
 
 
 /**
