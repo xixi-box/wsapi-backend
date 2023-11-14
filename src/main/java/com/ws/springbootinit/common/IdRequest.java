@@ -1,16 +1,14 @@
 package com.ws.springbootinit.common;
 
-import java.io.Serializable;
 import lombok.Data;
 
-/**
- * 删除请求
- *
+import java.io.Serializable;
 
+/**
+ * 通过id发送请求
  */
 @Data
-public class DeleteRequest implements Serializable {
-
+public class IdRequest implements Serializable {
     /**
      * id
      */

@@ -28,7 +28,10 @@ public class InterfaceInfoEditRequest implements Serializable {
      * 内容
      */
     private String content;
-
+    /**
+     * 请求参数
+     */
+    private String requestParams;
     /**
      * 标签列表
      */

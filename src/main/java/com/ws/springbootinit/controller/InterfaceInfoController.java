@@ -1,22 +1,23 @@
 package com.ws.springbootinit.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.ws.springbootinit.annotation.AuthCheck;
-import com.ws.springbootinit.common.BaseResponse;
-import com.ws.springbootinit.common.DeleteRequest;
-import com.ws.springbootinit.common.ErrorCode;
-import com.ws.springbootinit.common.ResultUtils;
+import com.ws.springbootinit.common.*;
 import com.ws.springbootinit.constant.CommonConstant;
 import com.ws.springbootinit.exception.BusinessException;
 import com.ws.springbootinit.model.dto.interfaceInfo.InterfaceInfoAddRequest;
 import com.ws.springbootinit.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.ws.springbootinit.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
+import com.ws.springbootinit.model.dto.interfaceInfo.InvokeInterfaceRequest;
 import com.ws.springbootinit.model.entity.InterfaceInfo;
 import com.ws.springbootinit.model.entity.User;
+import com.ws.springbootinit.model.enums.InterfaceInfoStatusEnum;
 import com.ws.springbootinit.service.InterfaceInfoService;
 import com.ws.springbootinit.service.UserService;
+import com.ws.wsapiclientsdk.client.WsApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,10 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
  *
- * @author <a href="https://github.com/liws">程序员鱼皮</a>
- * @from <a href="https://ws.icu">编程导航知识星球</a>
  */
 @RestController
 @RequestMapping("/interfaceInfo")
@@ -42,6 +40,8 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private WsApiClient wsApiClient;
 
     private final static Gson GSON = new Gson();
 
@@ -103,6 +103,71 @@ public class InterfaceInfoController {
     }
 
     /**
+     * 上线
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = idRequest.getId();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        //判断接口是否调用
+        com.ws.wsapiclientsdk.model.User user = new com.ws.wsapiclientsdk.model.User();
+        user.setUsername("test");
+        String usernameByPost = wsApiClient.getUsernameByPost(user);
+        if (StringUtils.isBlank(usernameByPost)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"接口调用失败");
+        }
+
+        // 仅本人或管理员可修改
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+
+    /**
+     * 下线
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                      HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = idRequest.getId();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 仅本人或管理员可修改
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
      * 更新
      *
      * @param interfaceInfoUpdateRequest
@@ -134,10 +199,11 @@ public class InterfaceInfoController {
         return ResultUtils.success(result);
     }
 
+
     /**
      * 根据 id 获取
-     *
      * @param id
+     * 1724350660162678787
      * @return
      */
     @GetMapping("/get")
@@ -201,5 +267,36 @@ public class InterfaceInfoController {
     }
 
     // endregion
+    /**
+     * 在线调用接口
+     *
+     * @param invokeInterfaceRequest 携带id、请求参数
+     * @return data
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterface(@RequestBody InvokeInterfaceRequest invokeInterfaceRequest, HttpServletRequest request) {
+        if (invokeInterfaceRequest == null || invokeInterfaceRequest.getId() < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断接口是否存在
+        long id = invokeInterfaceRequest.getId();
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        if (interfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (interfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口未上线");
+        }
 
+        // 得到当前用户
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        WsApiClient client = new WsApiClient(accessKey, secretKey);
+        // 先写死请求
+        String userRequestParams = invokeInterfaceRequest.getUserRequestParams();
+        com.ws.wsapiclientsdk.model.User user = JSONUtil.toBean(userRequestParams, com.ws.wsapiclientsdk.model.User.class);
+        String result = client.getUsernameByPost(user);
+        return ResultUtils.success(result);
+    }
 }

@@ -1,5 +1,7 @@
 package com.ws.springbootinit.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
@@ -15,6 +17,7 @@ public class InterfaceInfo implements Serializable {
     /**
      * 主键
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -36,12 +39,19 @@ public class InterfaceInfo implements Serializable {
     /**
      * 请求头
      */
-    private String requestheader;
+    private String requestHeader;
 
     /**
      * 响应头
      */
-    private String responseheader;
+    private String responseHeader;
+    /**
+     * 请求参数
+     * [
+     *   {"name": "username", "type": "string"}
+     * ]
+     */
+    private String requestParams;
 
     /**
      * 接口状态（0-关闭，1-开启）
@@ -72,7 +82,7 @@ public class InterfaceInfo implements Serializable {
      * 是否删除(0-未删, 1-已删)
      */
     @TableLogic
-    private Integer isdelete;
+    private Integer isDelete;
 
     private static final long serialVersionUID = 1L;
 
