@@ -1,6 +1,6 @@
 # 数据库初始化
-# @author <a href="https://github.com/liws">程序员鱼皮</a>
-# @from <a href="https://ws.icu">编程导航知识星球</a>
+# @author <a href="https://github.com/xixi-box">西西盒子</a>
+# @from
 
 -- 创建库
 create database if not exists wsapi;
