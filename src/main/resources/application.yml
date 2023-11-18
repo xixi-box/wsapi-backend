@@ -94,3 +94,12 @@ wsapi:
   client:
     access-key: ws
     secret-key: 123
+dubbo:
+  application:
+    name: dubbo-api-platform-backend-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://192.168.200.1:8848

@@ -3,11 +3,12 @@ package com.ws.springbootinit.aop;
 import com.ws.springbootinit.annotation.AuthCheck;
 import com.ws.springbootinit.common.ErrorCode;
 import com.ws.springbootinit.exception.BusinessException;
-import com.ws.springbootinit.model.entity.User;
 import com.ws.springbootinit.model.enums.UserRoleEnum;
 import com.ws.springbootinit.service.UserService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import com.wsapi.common.model.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

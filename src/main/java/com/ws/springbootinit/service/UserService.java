@@ -1,14 +1,9 @@
 package com.ws.springbootinit.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ws.springbootinit.model.dto.user.UserQueryRequest;
-import com.ws.springbootinit.model.entity.User;
-import com.ws.springbootinit.model.vo.LoginUserVO;
-import com.ws.springbootinit.model.vo.UserVO;
-import java.util.List;
+import com.wsapi.common.model.entity.User;
+
 import javax.servlet.http.HttpServletRequest;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
 /**
  * 用户服务

@@ -1,7 +1,9 @@
 package com.ws.springbootinit.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ws.springbootinit.model.entity.UserInterfaceInfo;
+import com.wsapi.common.model.entity.UserInterfaceInfo;
+
+import java.util.List;
 
 
 /**
@@ -11,6 +13,8 @@ import com.ws.springbootinit.model.entity.UserInterfaceInfo;
 * @Entity generator.domain.UserInterfaceInfo
 */
 public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
+
+    List<UserInterfaceInfo> listTopInvokeInterfaceInfo(int i);
 
 }
 

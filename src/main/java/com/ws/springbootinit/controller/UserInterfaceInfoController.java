@@ -13,10 +13,10 @@ import com.ws.springbootinit.exception.BusinessException;
 import com.ws.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
 import com.ws.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
 import com.ws.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
-import com.ws.springbootinit.model.entity.User;
-import com.ws.springbootinit.model.entity.UserInterfaceInfo;
 import com.ws.springbootinit.service.UserInterfaceInfoService;
 import com.ws.springbootinit.service.UserService;
+import com.wsapi.common.model.entity.User;
+import com.wsapi.common.model.entity.UserInterfaceInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -71,7 +71,7 @@ public class UserInterfaceInfoController {
         return ResultUtils.success(newUserInterfaceInfoId);
     }
 
-    // [加入编程导航](https://t.zsxq.com/0emozsIJh) 深耕编程提升【两年半】、国内净值【最高】的编程社群、用心服务【20000+】求学者、帮你自学编程【不走弯路】
+
 
     /**
      * 删除

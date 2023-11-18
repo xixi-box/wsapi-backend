@@ -1,7 +1,7 @@
 package com.ws.springbootinit.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ws.springbootinit.model.entity.InterfaceInfo;
+import com.wsapi.common.model.entity.InterfaceInfo;
 
 /**
 * @author 26062
